@@ -1,5 +1,6 @@
 const path = require("path");
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   webpack: (config) => {
     config.resolve.alias["@"] = path.resolve(__dirname, "src");
@@ -8,4 +9,5 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+
 
