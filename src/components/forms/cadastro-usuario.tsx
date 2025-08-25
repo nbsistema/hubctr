@@ -13,7 +13,6 @@ import { UserPlus } from 'lucide-react'
 interface Empresa {
   id: string
   nome: string
-  email: string
   tipo: string
 }
 
@@ -28,6 +27,7 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
   const [formData, setFormData] = useState({
     nome: '',
     empresa_id: '',
+    role: '',
     email: '',
     senha: ''
   })
@@ -58,7 +58,7 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
     setFormData(prev => ({
       ...prev,
       empresa_id: empresaId,
-      email: empresa?.email || ''
+      role: empresa?.tipo === 'parceiro' ? 'parceiro' : 'checkup'
     }))
   }
 
@@ -67,12 +67,6 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
     setLoading(true)
 
     try {
-      const empresa = empresas.find(e => e.id === formData.empresa_id)
-      
-      if (formData.email !== empresa?.email) {
-        throw new Error('O email deve ser o mesmo da empresa cadastrada')
-      }
-
       // 1. Criar usuário no Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
@@ -85,12 +79,12 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
       if (authError) throw authError
 
       // 2. Criar perfil do usuário
-      if (authData.user && empresa) {
+      if (authData.user) {
         const { error: profileError } = await supabase
           .from('user_profiles')
           .insert([{
             user_id: authData.user.id,
-            role: empresa.tipo === 'parceiro' ? 'parceiro' : 'checkup',
+            role: formData.role,
             nome: formData.nome,
             empresa_id: formData.empresa_id
           }])
@@ -98,7 +92,7 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
         if (profileError) throw profileError
       }
 
-      setFormData({ nome: '', empresa_id: '', email: '', senha: '' })
+      setFormData({ nome: '', empresa_id: '', role: '', email: '', senha: '' })
       setOpen(false)
       onSuccess?.()
     } catch (error) {
@@ -153,13 +147,14 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
           </div>
           
           <div>
-            <Label htmlFor="email">Email (deve ser o mesmo da empresa)</Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={formData.email}
-              readOnly
-              className="bg-gray-50"
+              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              required
+              disabled={loading}
             />
           </div>
 

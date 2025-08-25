@@ -21,8 +21,7 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
   const [formData, setFormData] = useState({
     nome: '',
     tipo: 'parceiro',
-    email: '',
-    senha: ''
+    email: ''
   })
 
   const supabase = createClient()
@@ -32,45 +31,17 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
     setLoading(true)
 
     try {
-      // 1. Criar usuário no Supabase Auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.senha,
-        options: {
-          emailRedirectTo: undefined // Desabilitar confirmação por email
-        }
-      })
-
-      if (authError) throw authError
-
-      // 2. Inserir empresa
-      const { data: empresaData, error: empresaError } = await supabase
+      // Inserir empresa
+      const { error: empresaError } = await supabase
         .from('empresas')
         .insert([{
           nome: formData.nome,
-          tipo: formData.tipo,
-          email: formData.email
+          tipo: formData.tipo
         }])
-        .select()
-        .single()
 
       if (empresaError) throw empresaError
 
-      // 3. Criar perfil do usuário
-      if (authData.user) {
-        const { error: profileError } = await supabase
-          .from('user_profiles')
-          .insert([{
-            user_id: authData.user.id,
-            role: formData.tipo,
-            nome: formData.nome, // Nome da empresa como nome do usuário inicial
-            empresa_id: empresaData.id
-          }])
-
-        if (profileError) throw profileError
-      }
-
-      setFormData({ nome: '', tipo: 'parceiro', email: '', senha: '' })
+      setFormData({ nome: '', tipo: 'parceiro', email: '' })
       setOpen(false)
       onSuccess?.()
     } catch (error) {
@@ -128,21 +99,8 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
               type="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              required
               disabled={loading}
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="senha">Senha</Label>
-            <Input
-              id="senha"
-              type="password"
-              value={formData.senha}
-              onChange={(e) => setFormData(prev => ({ ...prev, senha: e.target.value }))}
-              required
-              disabled={loading}
-              minLength={6}
+              placeholder="Email de contato (opcional)"
             />
           </div>
           

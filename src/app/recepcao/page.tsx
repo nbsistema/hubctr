@@ -30,7 +30,6 @@ interface Empresa {
   id: string
   nome: string
   tipo: string
-  email: string
   created_at: string
 }
 
@@ -68,8 +67,7 @@ export default function RecepcaoPage() {
   
   const [novaEmpresa, setNovaEmpresa] = useState({
     nome: '',
-    tipo: 'parceiro',
-    email: ''
+    tipo: 'parceiro'
   })
 
   const router = useRouter()
@@ -138,11 +136,14 @@ export default function RecepcaoPage() {
     try {
       const { error } = await supabase
         .from('empresas')
-        .insert([novaEmpresa])
+        .insert([{
+          nome: novaEmpresa.nome,
+          tipo: novaEmpresa.tipo
+        }])
 
       if (error) throw error
 
-      setNovaEmpresa({ nome: '', tipo: 'parceiro', email: '' })
+      setNovaEmpresa({ nome: '', tipo: 'parceiro' })
       setOpenEmpresaModal(false)
       loadData()
     } catch (error) {
@@ -330,17 +331,6 @@ export default function RecepcaoPage() {
                       </Select>
                     </div>
                     
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={novaEmpresa.email}
-                        onChange={(e) => setNovaEmpresa(prev => ({ ...prev, email: e.target.value }))}
-                        required
-                      />
-                    </div>
-                    
                     <DialogFooter>
                       <Button type="submit" disabled={loadingAction}>
                         {loadingAction ? <Loading size="sm" /> : 'Cadastrar'}
@@ -358,7 +348,9 @@ export default function RecepcaoPage() {
                     <div className="flex justify-between items-start">
                       <div>
                         <CardTitle className="text-lg">{empresa.nome}</CardTitle>
-                        <CardDescription>{empresa.email}</CardDescription>
+                        <CardDescription>
+                          Cadastrada em {formatDate(empresa.created_at)}
+                        </CardDescription>
                       </div>
                       <Badge variant={empresa.tipo === 'parceiro' ? 'default' : 'secondary'}>
                         {empresa.tipo}
@@ -366,9 +358,7 @@ export default function RecepcaoPage() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-gray-600">
-                      Cadastrada em {formatDate(empresa.created_at)}
-                    </p>
+                    <p className="text-sm text-gray-600">Tipo: {empresa.tipo}</p>
                   </CardContent>
                 </Card>
               ))}
