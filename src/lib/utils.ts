@@ -1,5 +1,3 @@
-
-
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -35,7 +33,5 @@ export function getStatusColor(status: string): string {
     default:
       return 'bg-gray-100 text-gray-800'
   }
+}
 
-export function formatDate(dateString: string): string { ... }
-export function formatCPF(cpf: string): string { ... }
-export function getStatusColor(status: string): string { ... }
