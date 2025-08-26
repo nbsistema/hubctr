@@ -21,7 +21,6 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
   const [formData, setFormData] = useState({
     nome: '',
     tipo: 'parceiro',
-    email: ''
   })
 
   const supabase = createClient()
@@ -36,12 +35,13 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
         .from('empresas')
         .insert([{
           nome: formData.nome,
-          tipo: formData.tipo
+          tipo: formData.tipo,
+          email: null
         }])
 
       if (empresaError) throw empresaError
 
-      setFormData({ nome: '', tipo: 'parceiro', email: '' })
+      setFormData({ nome: '', tipo: 'parceiro' })
       setOpen(false)
       onSuccess?.()
     } catch (error) {
@@ -91,19 +91,6 @@ export function CadastroEmpresa({ onSuccess }: CadastroEmpresaProps) {
               </SelectContent>
             </Select>
           </div>
-          
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              disabled={loading}
-              placeholder="Email de contato (opcional)"
-            />
-          </div>
-          
           <DialogFooter>
             <Button type="submit" disabled={loading}>
               {loading ? <Loading size="sm" /> : 'Cadastrar'}

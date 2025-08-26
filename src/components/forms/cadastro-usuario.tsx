@@ -29,7 +29,8 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
     empresa_id: '',
     role: '',
     email: '',
-    senha: ''
+    senha: '',
+    confirmSenha: ''
   })
 
   const supabase = createClient()
@@ -64,6 +65,12 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (formData.senha !== formData.confirmSenha) {
+      alert('As senhas não coincidem')
+      return
+    }
+    
     setLoading(true)
 
     try {
@@ -92,7 +99,7 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
         if (profileError) throw profileError
       }
 
-      setFormData({ nome: '', empresa_id: '', role: '', email: '', senha: '' })
+      setFormData({ nome: '', empresa_id: '', role: '', email: '', senha: '', confirmSenha: '' })
       setOpen(false)
       onSuccess?.()
     } catch (error) {
@@ -165,6 +172,19 @@ export function CadastroUsuario({ onSuccess }: CadastroUsuarioProps) {
               type="password"
               value={formData.senha}
               onChange={(e) => setFormData(prev => ({ ...prev, senha: e.target.value }))}
+              required
+              disabled={loading}
+              minLength={6}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="confirmSenha">Confirmar Senha</Label>
+            <Input
+              id="confirmSenha"
+              type="password"
+              value={formData.confirmSenha}
+              onChange={(e) => setFormData(prev => ({ ...prev, confirmSenha: e.target.value }))}
               required
               disabled={loading}
               minLength={6}

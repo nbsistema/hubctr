@@ -146,6 +146,12 @@ export default function AdminPage() {
 
   const handleCadastrarExame = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!novoExame.nome.trim() || !novoExame.descricao.trim()) {
+      alert('Por favor, preencha todos os campos')
+      return
+    }
+    
     setLoadingAction(true)
 
     try {

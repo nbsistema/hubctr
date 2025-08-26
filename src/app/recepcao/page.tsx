@@ -67,7 +67,7 @@ export default function RecepcaoPage() {
   
   const [novaEmpresa, setNovaEmpresa] = useState({
     nome: '',
-    tipo: 'parceiro'
+    tipo: 'parceiro' as 'parceiro' | 'checkup'
   })
 
   const router = useRouter()
@@ -138,12 +138,13 @@ export default function RecepcaoPage() {
         .from('empresas')
         .insert([{
           nome: novaEmpresa.nome,
-          tipo: novaEmpresa.tipo
+          tipo: novaEmpresa.tipo,
+          email: null
         }])
 
       if (error) throw error
 
-      setNovaEmpresa({ nome: '', tipo: 'parceiro' })
+      setNovaEmpresa({ nome: '', tipo: 'parceiro' as 'parceiro' | 'checkup' })
       setOpenEmpresaModal(false)
       loadData()
     } catch (error) {
@@ -320,7 +321,7 @@ export default function RecepcaoPage() {
                     
                     <div>
                       <Label htmlFor="tipo">Tipo</Label>
-                      <Select value={novaEmpresa.tipo} onValueChange={(value) => setNovaEmpresa(prev => ({ ...prev, tipo: value }))}>
+                      <Select value={novaEmpresa.tipo} onValueChange={(value: 'parceiro' | 'checkup') => setNovaEmpresa(prev => ({ ...prev, tipo: value }))}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
