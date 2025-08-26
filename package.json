@@ -17,6 +17,8 @@
     "@supabase/supabase-js": "^2.44.0",
     "lucide-react": "^0.441.0",
     "class-variance-authority": "^0.7.0"
+    "@radix-ui/react-dialog": "^1.0.5"
+    "@radix-ui/react-label": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
