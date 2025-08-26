@@ -41,7 +41,6 @@ export function CriarEncaminhamento({ empresaId, onSuccess }: CriarEncaminhament
     observacao: ''
   })
 
-  const supabase = createClient()
 
   useEffect(() => {
     if (open) {
